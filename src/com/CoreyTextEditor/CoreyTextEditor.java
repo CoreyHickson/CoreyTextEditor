@@ -1,4 +1,4 @@
-package com.textEditor;
+package com.CoreyTextEditor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -21,13 +21,21 @@ public class CoreyTextEditor extends JFrame {
     private boolean changed = false;
 
     /**
-     * Constructor to create the frame and add the parts in
+     * Constructor to create the frame and its components
      */
     public CoreyTextEditor() {
         // Create a scroll pane
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         JScrollPane scroll = new JScrollPane(area, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         add(scroll, BorderLayout.CENTER);
+
+        // Adds the system default look and feel
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
         // Create a menu bar
         JMenuBar JMB = new JMenuBar();
@@ -45,22 +53,21 @@ public class CoreyTextEditor extends JFrame {
         file.addSeparator();
         file.add(Quit);
 
-        for (int i = 0; i < 4; i++) {
-            file.getItem(i).setIcon(null);
-        }
-
         edit.add(Cut);
         edit.add(Copy);
         edit.add(Paste);
 
-        edit.getItem(0).setText("Cut out");
+        edit.getItem(0).setText("Cut");
+        edit.getItem(0).setIcon(new ImageIcon("cut.gif"));
         edit.getItem(1).setText("Copy");
+        edit.getItem(1).setIcon(new ImageIcon("copy.gif"));
         edit.getItem(2).setText("Paste");
+        edit.getItem(2).setIcon(new ImageIcon("paste.gif"));
 
         // Time to make a toolbar!
         JToolBar tool = new JToolBar();
         add(tool, BorderLayout.NORTH);
-        tool.add(Cut);
+        tool.add(New);
         tool.add(Open);
         tool.add(Save);
         tool.addSeparator();
@@ -81,6 +88,7 @@ public class CoreyTextEditor extends JFrame {
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
+
         /*
           KeyListener to change Save and SaveAs
          */
@@ -92,16 +100,16 @@ public class CoreyTextEditor extends JFrame {
             }
         };
         area.addKeyListener(k1);
-        setTitle(currentFile);
+        setTitle(currentFile + " - CoreyTextEditor");
         setVisible(true);
     }
 
-    Action New = new AbstractAction("New", new ImageIcon("Path/image.gif")) {
+    Action New = new AbstractAction("New", new ImageIcon("new.gif")) {
         public void actionPerformed(ActionEvent e) {
             saveOld();
             area.setText("");
             currentFile = "Untitled";
-            setTitle(currentFile);
+            setTitle(currentFile + " - CoreyTextEditor");
             changed = false;
             Save.setEnabled(false);
             SaveAs.setEnabled(false);
@@ -164,10 +172,10 @@ public class CoreyTextEditor extends JFrame {
     private void readInFile(String fileName) {
         try {
             FileReader r = new FileReader(fileName);
-            area.read(r,null);
+            area.read(r, null);
             r.close();
             currentFile = fileName;
-            setTitle(currentFile);
+            setTitle(currentFile + " - CoreyTextEditor");
             changed = false;
         }
         catch (IOException e) {
@@ -182,7 +190,7 @@ public class CoreyTextEditor extends JFrame {
             area.write(w);
             w.close();
             currentFile = fileName;
-            setTitle(currentFile);
+            setTitle(currentFile + " - CoreyTextEditor");
             changed = false;
             Save.setEnabled(false);
         }
